@@ -1,0 +1,31 @@
+services:
+  mongo:
+    image: mongo:8.0
+    container_name: mongo
+    restart: unless-stopped
+    command: --bind_ip_all
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  orion:
+    image: telefonicaiot/fiware-orion
+    container_name: orion
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    command: -dbURI mongodb://mongo:27017
+    ports:
+      - "1026:1026"
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  mongo_data:
